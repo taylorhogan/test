@@ -70,7 +70,7 @@
 ;
 ; Determine teh distance between 2 cartesian coordinates
 ;
-(defn dist [p1 p2]
+(defn distC [p1 p2]
   (let [xdist (- (:x p1) (:x p2))
         ydist (- (:y p1) (:y p2))
         s (+ (* xdist xdist) (* ydist ydist))
@@ -78,9 +78,44 @@
     (Math/sqrt s)
     )
   )
-(println (dist (Point. 0 0 ) (Point. 10 10 )))
+(println (distC (Point. 0 0 ) (Point. 10 10 )))
+
 
 ; Q5
+; Create an abstract interface that "allows" both cartesian and polar coordinates to implement a single function called distance
+; Create a new typer Polar Point
+; Create a new protocol AllPoints with a method distance
+; extend polar and cartesion points to use this protocol
+
+(defrecord PointPolar [a, d])
+
+(defn to-cartesion [p]
+  (let
+    [x (* (.d p) (Math/cos (Math/toRadians (.a p))))
+     y (* (.d p) (Math/sin (Math/toRadians (.a p))))
+     ]
+    (Point. x y)))
+
+(defprotocol AllPoints
+  "Determine distance between 2 coordinates"
+  (distance [this other])
+  )
+
+(extend-protocol AllPoints Point
+  (distance [this other]
+    (distC this other)))
+
+(extend-protocol AllPoints PointPolar
+  (distance [this other]
+    (distC (to-cartesion this) (to-cartesion other))))
+
+(def pp1 (PointPolar. 0 1))
+(def pp2 (PointPolar. 90 1))
+(def cp1 (Point. 1 0))
+(def cp2 (Point. 0 1))
+
+(println "polar" (distance pp1 pp2))
+(println "cartesian"(distance cp1 cp2))
 
 
 
