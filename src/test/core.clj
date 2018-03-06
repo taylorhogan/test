@@ -124,35 +124,20 @@
 ;
 ; Given a collection, return a collection of all pairs of items in the original collection
 ;
-(defn all-pairs [xs]
+
+(defn all-pairs-2 [xs]
   (when xs
-    (concat (map vector (repeat (first xs)) (rest xs))
-            (all-pairs (next xs))
+    (concat (map #(concat (vector (first xs)) (vector %)) (rest xs))
+            (all-pairs-2 (next xs))
             )
     )
   )
-
+(println (all-pairs-2 '(C G A T)))
 
 ; Q7
 ;
 ; Vectorize a cicle or radius r at point (x, y) into n vertices
 ;
-(defn vectorize-circle [x y r n]
-  (let
-    [alpha (/ 360 n)]
-    (loop
-      [c 0
-       points []
-       ]
-      (if (= c n)
-        points
-        (let
-          [a (Math/toRadians (* alpha c))
-           dx (+ x (* r (Math/cos a)))
-           dy (+ y (* r (Math/sin a)))]
-
-          (recur (inc c)
-                 (conj points (Point. dx dy))))))))
 
 (defn gen-coord [ x y r alpha index]
   (let
@@ -164,7 +149,7 @@
   )
 
 
-(defn vectorize-circle-map [x y r n]
+(defn vectorize-circle[x y r n]
   (let
     [alpha (/ 360 n)]
     (map (partial gen-coord x y r alpha) (range n))
@@ -172,7 +157,7 @@
   )
 
 (println (vectorize-circle 0 10 10 4))
-(println (vectorize-circle-map 0 10 10 4))
+
 ; Q8
 ;
 ; Determine what is the probability of throwing a 9 on two die
@@ -186,28 +171,15 @@
      (rand-nth die)
      ))
 
-(defn monte-carlo [attempts target]
-  (loop
-    [t attempts
-     good 0]
-    (if (= t 0)
-      good
-      (recur (dec t) (if (= (toss) target) (inc good) good)))))
 
-(defn monte-carlo-map [attempts target]
+
+(defn monte-carlo [attempts target]
   (count (filter #(= target %) (for [trial (range attempts)] (toss))))
   )
 
 (def target 9)
 
-(time
-  (println (float (/ (monte-carlo-map attempts target) attempts)) (float (/ 1 target)))
-
-  )
-(time
-  (println (float (/ (monte-carlo attempts target) attempts)) (float (/ 1 target)))
-
-  )
+(time  (println (float (/ (monte-carlo attempts target) attempts)) (float (/ 1 target))))
 
 
 
