@@ -7,7 +7,7 @@
 (def vowels '(\a \e \i \o \u))
 
 (defn vowel? [c]
-  (some (fn [v] (= c v)) vowels)
+  (some #(= c %) vowels)
   )
 
 
@@ -154,9 +154,25 @@
           (recur (inc c)
                  (conj points (Point. dx dy))))))))
 
+(defn gen-coord [ x y r alpha index]
+  (let
+    [a (Math/toRadians (* alpha index))
+     dx (+ x (* r (Math/cos a)))
+     dy (+ y (* r (Math/sin a)))]
+    (Point. dx dy)
+    )
+  )
+
+
+(defn vectorize-circle-map [x y r n]
+  (let
+    [alpha (/ 360 n)]
+    (map (partial gen-coord x y r alpha) (range n))
+    )
+  )
 
 (println (vectorize-circle 0 10 10 4))
-
+(println (vectorize-circle-map 0 10 10 4))
 ; Q8
 ;
 ; Determine what is the probability of throwing a 9 on two die
@@ -178,9 +194,20 @@
       good
       (recur (dec t) (if (= (toss) target) (inc good) good)))))
 
-(def target 9)
-(println (float (/ (monte-carlo attempts target) attempts)) (float (/ 1 target)))
+(defn monte-carlo-map [attempts target]
+  (count (filter #(= target %) (for [trial (range attempts)] (toss))))
+  )
 
+(def target 9)
+
+(time
+  (println (float (/ (monte-carlo-map attempts target) attempts)) (float (/ 1 target)))
+
+  )
+(time
+  (println (float (/ (monte-carlo attempts target) attempts)) (float (/ 1 target)))
+
+  )
 
 
 
