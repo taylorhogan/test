@@ -144,7 +144,7 @@
     [a (Math/toRadians (* alpha index))
      dx (+ x (* r (Math/cos a)))
      dy (+ y (* r (Math/sin a)))]
-    (Point. dx dy)
+    (Point. (int dx)  (int dy))
     )
   )
 
@@ -156,7 +156,11 @@
     )
   )
 
-(println (vectorize-circle 0 10 10 4))
+(defn to-list [p]
+  (list (:x p) (:y p))
+  )
+
+(println (map to-list (vectorize-circle 0 10 10 4)))
 
 ; Q8
 ;
@@ -180,8 +184,5 @@
 (def target 9)
 
 (time  (println (float (/ (monte-carlo attempts target) attempts)) (float (/ 1 target))))
-
-
-
 
 
